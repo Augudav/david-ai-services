@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Customer Support Demo | David's AI Services</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: #4f46e5;
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .bot-info h2 {
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+        .bot-info p {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+        .chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .bot-message {
+            background: #f1f5f9;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+        }
+        .user-message {
+            background: #4f46e5;
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 16px 16px;
+        }
+        .quick-reply {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-reply:hover {
+            background: #f1f5f9;
+            border-color: #4f46e5;
+            color: #4f46e5;
+        }
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #e2e8f0;
+            padding: 12px;
+            gap: 8px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .chat-input input:focus {
+            border-color: #4f46e5;
+        }
+        .chat-input button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .chat-input button:hover {
+            background: #4338ca;
+        }
+        .footer {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Customer Support Demo</h1>
+        <p>Interactive chatbot for your business. Try it below!</p>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="bot-avatar">🤖</div>
+            <div class="bot-info">
+                <h2>Support Assistant</h2>
+                <p>Typically replies instantly</p>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="messages">
+            <div class="message bot-message">
+                Hi there! 👋 I'm your AI assistant. How can I help you today?
+            </div>
+            <div class="typing-indicator" id="typing">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        
+        <div class="quick-replies" id="quickReplies">
+            <button class="quick-reply" data-msg="What services do you offer?">Services</button>
+            <button class="quick-reply" data-msg="What are your prices?">Pricing</button>
+            <button class="quick-reply" data-msg="How long does delivery take?">Delivery time</button>
+            <button class="quick-reply" data-msg="I want to start a project">Start project</button>
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Built by David | <a href="mailto:your@email.com">Get your own chatbot</a>
+    </div>
+
+    <script>
+        const responses = {
+            'services': "I offer AI chatbots, data scraping, SEO content, and Python automation. Which interests you most?",
+            'pricing': "My services start at $150 for content, $200 for scrapers, $250 for Python tools, and $300 for chatbots. All include revisions!",
+            'delivery': "Most projects are delivered in 3-5 days. Rush delivery available for an additional fee. What's your timeline?",
+            'start': "Great! To get started, I'll need: 1) A brief description of what you need, 2) Your timeline, 3) Any specific requirements. Ready to share details?",
+            'chatbot': "AI chatbots can handle customer support, lead qualification, appointment booking, and FAQs. They work 24/7 and reduce your workload significantly.",
+            'scraper': "I build custom scrapers for lead generation, competitor monitoring, price tracking, and data collection. What data do you need?",
+            'content': "I create SEO-optimized blog posts, SOPs, documentation, and business templates. AI-assisted but human-polished quality.",
+            'python': "Python automation can handle repetitive tasks, API integrations, data processing, and report generation. What do you want to automate?",
+            'contact': "You can reach me at your@email.com or message me on LinkedIn. I typically respond within a few hours!",
+            'default': "That's a great question! I'd be happy to help. Could you tell me more about what you're looking for?"
+        };
+
+        function getResponse(input) {
+            const lower = input.toLowerCase();
+            if (lower.includes('service') || lower.includes('offer') || lower.includes('do')) return responses.services;
+            if (lower.includes('price') || lower.includes('cost') || lower.includes('how much')) return responses.pricing;
+            if (lower.includes('deliver') || lower.includes('time') || lower.includes('how long')) return responses.delivery;
+            if (lower.includes('start') || lower.includes('begin') || lower.includes('project') || lower.includes('hire')) return responses.start;
+            if (lower.includes('chatbot') || lower.includes('chat bot') || lower.includes('bot')) return responses.chatbot;
+            if (lower.includes('scrap') || lower.includes('data') || lower.includes('lead')) return responses.scraper;
+            if (lower.includes('content') || lower.includes('blog') || lower.includes('seo') || lower.includes('write')) return responses.content;
+            if (lower.includes('python') || lower.includes('automat') || lower.includes('script')) return responses.python;
+            if (lower.includes('contact') || lower.includes('reach') || lower.includes('email')) return responses.contact;
+            if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) return "Hello! 👋 Great to meet you. What can I help you with today?";
+            if (lower.includes('thank')) return "You're welcome! Let me know if you have any other questions. I'm here to help! 😊";
+            return responses.default;
+        }
+
+        function addMessage(text, isUser) {
+            const messages = document.getElementById('messages');
+            const typing = document.getElementById('typing');
+            const div = document.createElement('div');
+            div.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            div.textContent = text;
+            messages.insertBefore(div, typing);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            addMessage(text, true);
+            input.value = '';
+            
+            // Show typing indicator
+            const typing = document.getElementById('typing');
+            typing.style.display = 'block';
+            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+            
+            // Simulate bot thinking
+            setTimeout(() => {
+                typing.style.display = 'none';
+                addMessage(getResponse(text), false);
+            }, 1000 + Math.random() * 500);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') sendMessage();
+        }
+
+        // Quick reply buttons
+        document.querySelectorAll('.quick-reply').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('userInput').value = this.dataset.msg;
+                sendMessage();
+            });
+        });
+    </script>
+</body>
+</html>
