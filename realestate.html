@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate AI Assistant Demo | David's AI Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .agent-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .agent-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+        }
+        
+        .agent-info span {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8fafc;
+        }
+        
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .bot-message {
+            background: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .user-message {
+            background: #2563eb;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .quick-reply {
+            background: #e0e7ff;
+            color: #3730a3;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .quick-reply:hover {
+            background: #c7d2fe;
+            transform: translateY(-1px);
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        
+        .chat-input {
+            padding: 16px 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        
+        .chat-input input:focus {
+            border-color: #2563eb;
+        }
+        
+        .chat-input button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.2s;
+        }
+        
+        .chat-input button:hover {
+            background: #1d4ed8;
+        }
+        
+        .property-card {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        
+        .property-card h4 {
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+        
+        .property-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        
+        .property-card .price {
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .features {
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            margin-top: 20px;
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        .features h3 {
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .features ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .features li {
+            font-size: 0.85rem;
+            color: #475569;
+        }
+        
+        .features li::before {
+            content: "✓ ";
+            color: #22c55e;
+        }
+        
+        .back-link {
+            margin-top: 20px;
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏠 Real Estate AI Assistant</h1>
+        <p>24/7 property inquiries, scheduling, and qualification</p>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="agent-avatar">🏡</div>
+            <div class="agent-info">
+                <h3>HomeBot AI</h3>
+                <span><span class="online-dot"></span>Online • Instant replies</span>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                👋 Hi! I'm HomeBot, your 24/7 property assistant. I can help you:
+                <br><br>
+                🔍 Find properties matching your needs<br>
+                📅 Schedule viewings<br>
+                💰 Get price and availability info<br>
+                📋 Answer questions about listings
+            </div>
+            <div class="message bot-message">
+                What brings you here today?
+                <div class="quick-replies">
+                    <button class="quick-reply" onclick="sendQuickReply('Looking to buy')">🏠 Looking to buy</button>
+                    <button class="quick-reply" onclick="sendQuickReply('Looking to rent')">🔑 Looking to rent</button>
+                    <button class="quick-reply" onclick="sendQuickReply('Schedule a viewing')">📅 Schedule viewing</button>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+    
+    <div class="features">
+        <h3>This demo shows how a real estate chatbot can:</h3>
+        <ul>
+            <li>Qualify buyer/renter leads</li>
+            <li>Show matching properties</li>
+            <li>Book viewings 24/7</li>
+            <li>Answer listing questions</li>
+            <li>Capture contact info</li>
+            <li>Integrate with CRM</li>
+        </ul>
+    </div>
+    
+    <a href="index.html" class="back-link">← Back to main portfolio</a>
+    
+    <script>
+        const conversations = {
+            'looking to buy': {
+                response: "Great! I'd love to help you find your perfect home. Let me ask a few quick questions to match you with the right properties.\n\nWhat's your budget range?",
+                quickReplies: ['Under $300k', '$300k - $500k', '$500k - $800k', 'Over $800k']
+            },
+            'looking to rent': {
+                response: "I can help you find the perfect rental! Let me learn about your needs.\n\nHow many bedrooms do you need?",
+                quickReplies: ['Studio/1 bed', '2 bedrooms', '3+ bedrooms']
+            },
+            'schedule a viewing': {
+                response: "I'd be happy to schedule a viewing for you! 📅\n\nDo you have a specific property in mind, or would you like me to suggest some based on your preferences?",
+                quickReplies: ['Suggest properties', 'I have an address', 'Available this weekend']
+            },
+            'under $300k': {
+                response: "Perfect! We have several lovely starter homes in that range.\n\nHere's one that just came on the market:",
+                followUp: {
+                    type: 'property',
+                    title: '🏠 123 Oak Street, Springfield',
+                    details: '3 bed • 2 bath • 1,450 sq ft',
+                    price: '$279,000',
+                    note: 'Updated kitchen, large backyard'
+                },
+                quickReplies: ['Schedule viewing', 'See more options', 'Different area']
+            },
+            '$300k - $500k': {
+                response: "Great budget! Here's a popular listing in your range:",
+                followUp: {
+                    type: 'property',
+                    title: '🏡 456 Maple Drive, Riverside',
+                    details: '4 bed • 2.5 bath • 2,100 sq ft',
+                    price: '$425,000',
+                    note: 'Move-in ready, excellent schools'
+                },
+                quickReplies: ['Schedule viewing', 'See more options', 'Tell me more']
+            },
+            'studio/1 bed': {
+                response: "Here's a great 1-bedroom that just became available:",
+                followUp: {
+                    type: 'property',
+                    title: '🔑 Modern Downtown Apartment',
+                    details: '1 bed • 1 bath • 650 sq ft',
+                    price: '$1,450/month',
+                    note: 'Gym, parking, pet-friendly'
+                },
+                quickReplies: ['Schedule viewing', 'Different location', 'Pet policy?']
+            },
+            'schedule viewing': {
+                response: "Perfect! Let me check our agent's availability. 📅\n\nWhat day works best for you?",
+                quickReplies: ['Tomorrow', 'This weekend', 'Next week']
+            },
+            'tomorrow': {
+                response: "We have openings tomorrow at:\n\n🕐 10:00 AM\n🕑 2:00 PM\n🕔 5:30 PM\n\nWhich time works for you?",
+                quickReplies: ['10:00 AM', '2:00 PM', '5:30 PM']
+            },
+            '10:00 am': {
+                response: "Excellent! I've got you down for tomorrow at 10:00 AM. ✅\n\nTo confirm your viewing, I just need:\n\n📧 Your email address\n📱 Phone number (optional, for reminders)",
+                quickReplies: ['Provide email', 'Call me instead']
+            },
+            'provide email': {
+                response: "Perfect! Just type your email and I'll send you:\n\n✉️ Confirmation with address & directions\n📋 Property details & virtual tour link\n🔔 Reminder 1 hour before\n\nYour agent Sarah will meet you there!",
+                quickReplies: ['Thanks!', 'Can I bring someone?', 'What should I look for?']
+            },
+            'thanks!': {
+                response: "You're welcome! 🎉\n\nIs there anything else I can help you with? I'm here 24/7 if you have questions about:\n\n• Other properties\n• The neighborhood\n• Financing options\n• The buying/renting process",
+                quickReplies: ['Neighborhood info', 'Financing options', 'That\'s all, thanks!']
+            },
+            'default': {
+                response: "I understand! Let me connect you with one of our agents who can help with that specific question.\n\nIn the meantime, would you like to:\n\n🏠 Browse featured properties\n📅 Schedule a general consultation\n📞 Request a callback",
+                quickReplies: ['Browse properties', 'Schedule consultation', 'Request callback']
+            }
+        };
+
+        function normalizeInput(input) {
+            return input.toLowerCase().trim();
+        }
+
+        function findResponse(input) {
+            const normalized = normalizeInput(input);
+            for (let key in conversations) {
+                if (normalized.includes(key) || key.includes(normalized)) {
+                    return conversations[key];
+                }
+            }
+            return conversations['default'];
+        }
+
+        function addMessage(text, isUser, property = null) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const typingIndicator = document.getElementById('typingIndicator');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = text;
+            
+            messagesDiv.insertBefore(messageDiv, typingIndicator);
+            
+            if (property) {
+                const propDiv = document.createElement('div');
+                propDiv.className = 'message bot-message';
+                propDiv.innerHTML = `
+                    <div class="property-card">
+                        <h4>${property.title}</h4>
+                        <p>${property.details}</p>
+                        <p>${property.note}</p>
+                        <p class="price">${property.price}</p>
+                    </div>
+                `;
+                messagesDiv.insertBefore(propDiv, typingIndicator);
+            }
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function addQuickReplies(replies) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const typingIndicator = document.getElementById('typingIndicator');
+            
+            const replyDiv = document.createElement('div');
+            replyDiv.className = 'message bot-message';
+            replyDiv.innerHTML = '<div class="quick-replies">' + 
+                replies.map(r => `<button class="quick-reply" onclick="sendQuickReply('${r}')">${r}</button>`).join('') +
+                '</div>';
+            
+            messagesDiv.insertBefore(replyDiv, typingIndicator);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+
+        function hideTyping() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            addMessage(text, true);
+            input.value = '';
+            
+            showTyping();
+            
+            setTimeout(() => {
+                hideTyping();
+                const response = findResponse(text);
+                addMessage(response.response, false, response.followUp);
+                if (response.quickReplies) {
+                    setTimeout(() => addQuickReplies(response.quickReplies), 300);
+                }
+            }, 800 + Math.random() * 600);
+        }
+
+        function sendQuickReply(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') sendMessage();
+        }
+    </script>
+</body>
+</html>
