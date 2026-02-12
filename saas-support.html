@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Customer Support Bot Demo | AI Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        @media (max-width: 900px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .features-panel {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #334155;
+        }
+        
+        .features-panel h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #f1f5f9;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .feature-content h3 {
+            font-size: 1rem;
+            color: #f1f5f9;
+            margin-bottom: 0.25rem;
+        }
+        
+        .feature-content p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        
+        .quick-actions {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #334155;
+        }
+        
+        .quick-actions h3 {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            background: #334155;
+            border: none;
+            color: #e2e8f0;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: #475569;
+            transform: translateY(-1px);
+        }
+        
+        .chat-container {
+            background: #1e293b;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .bot-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .bot-info h3 {
+            font-size: 1.1rem;
+            color: white;
+        }
+        
+        .bot-info span {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.3rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            max-width: 85%;
+            padding: 1rem;
+            border-radius: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bot-message {
+            background: #334155;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        .option-btn {
+            background: #475569;
+            border: 1px solid #64748b;
+            color: #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .option-btn:hover {
+            background: #6366f1;
+            border-color: #6366f1;
+        }
+        
+        .code-block {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            border: 1px solid #334155;
+        }
+        
+        .ticket-card {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            border-left: 3px solid #6366f1;
+        }
+        
+        .ticket-card h4 {
+            font-size: 0.9rem;
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .ticket-card p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        
+        .ticket-card .ticket-id {
+            font-family: monospace;
+            color: #6366f1;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: white;
+            font-size: 0.95rem;
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        
+        .chat-input button {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: transform 0.2s;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.02);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 0.5rem;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #64748b;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #94a3b8;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: #f1f5f9;
+        }
+        
+        .integration-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        
+        .integration-badge {
+            background: #0f172a;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            border: 1px solid #334155;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Portfolio</a>
+        
+        <header>
+            <span class="badge">🚀 Interactive Demo</span>
+            <h1>SaaS Support Bot</h1>
+            <p class="subtitle">24/7 customer support that resolves 70% of tickets automatically</p>
+        </header>
+        
+        <div class="demo-grid">
+            <div class="features-panel">
+                <h2>What This Bot Does</h2>
+                <ul class="feature-list">
+                    <li>
+                        <div class="feature-icon">🔑</div>
+                        <div class="feature-content">
+                            <h3>Password & Login Issues</h3>
+                            <p>Secure password resets, 2FA help, and account recovery without human intervention.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">💳</div>
+                        <div class="feature-content">
+                            <h3>Billing & Subscription</h3>
+                            <p>Plan changes, invoice requests, payment updates, and refund processing.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">🐛</div>
+                        <div class="feature-content">
+                            <h3>Bug Reports & Issues</h3>
+                            <p>Structured collection of bug reports with auto-categorization and ticket creation.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">📚</div>
+                        <div class="feature-content">
+                            <h3>Documentation Search</h3>
+                            <p>Instant answers from your knowledge base with relevant article links.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="feature-icon">🎫</div>
+                        <div class="feature-content">
+                            <h3>Smart Ticket Routing</h3>
+                            <p>When human help is needed, creates prioritized tickets with full context.</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="integration-badges">
+                    <span class="integration-badge">Zendesk</span>
+                    <span class="integration-badge">Intercom</span>
+                    <span class="integration-badge">Freshdesk</span>
+                    <span class="integration-badge">Slack</span>
+                    <span class="integration-badge">Discord</span>
+                </div>
+                
+                <div class="quick-actions">
+                    <h3>Try asking about:</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="sendMessage('I forgot my password')">Password reset</button>
+                        <button class="action-btn" onclick="sendMessage('How do I upgrade my plan?')">Upgrade plan</button>
+                        <button class="action-btn" onclick="sendMessage('The app keeps crashing')">Report a bug</button>
+                        <button class="action-btn" onclick="sendMessage('How do I use the API?')">API help</button>
+                        <button class="action-btn" onclick="sendMessage('I need to cancel')">Cancellation</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="bot-avatar">🤖</div>
+                    <div class="bot-info">
+                        <h3>CloudApp Support</h3>
+                        <span><span class="status-dot"></span>Online • Usually replies instantly</span>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <p>Hi! 👋 I'm your CloudApp support assistant. I can help you with:</p>
+                        <div class="message-options">
+                            <button class="option-btn" onclick="sendMessage('Account & Login issues')">🔑 Account & Login</button>
+                            <button class="option-btn" onclick="sendMessage('Billing question')">💳 Billing</button>
+                            <button class="option-btn" onclick="sendMessage('Report a bug')">🐛 Report Bug</button>
+                            <button class="option-btn" onclick="sendMessage('How do I use the API?')">📚 How-to Help</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="userInput" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const responses = {
+            password: {
+                text: "No problem! I can help you reset your password right now. 🔐",
+                followUp: `<p>For security, I'll send a password reset link to your registered email. Please confirm:</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="handlePasswordReset()">✉️ Send reset link</button>
+                        <button class="option-btn" onclick="sendMessage('I can\\'t access my email')">Can't access email</button>
+                    </div>`
+            },
+            billing: {
+                text: "I can help with billing! What would you like to do?",
+                followUp: `<div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('Show my current plan')">📋 View current plan</button>
+                        <button class="option-btn" onclick="sendMessage('How do I upgrade?')">⬆️ Upgrade plan</button>
+                        <button class="option-btn" onclick="sendMessage('Download invoice')">🧾 Get invoice</button>
+                        <button class="option-btn" onclick="sendMessage('Update payment method')">💳 Update payment</button>
+                    </div>`
+            },
+            upgrade: {
+                text: "Great choice! Here are our available plans:",
+                followUp: `<div class="ticket-card">
+                        <h4>📊 Your Current Plan: Starter ($29/mo)</h4>
+                        <p>5 users • 10GB storage • Email support</p>
+                    </div>
+                    <p style="margin-top: 1rem;">Available upgrades:</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="handleUpgrade('pro')">Pro $79/mo</button>
+                        <button class="option-btn" onclick="handleUpgrade('business')">Business $199/mo</button>
+                        <button class="option-btn" onclick="sendMessage('Compare all plans')">Compare plans</button>
+                    </div>`
+            },
+            bug: {
+                text: "Sorry to hear you're experiencing issues! Let me collect some details to get this fixed quickly.",
+                followUp: `<p>What type of issue are you seeing?</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('App crashes or freezes')">🔴 Crash/Freeze</button>
+                        <button class="option-btn" onclick="sendMessage('Feature not working')">🟡 Feature broken</button>
+                        <button class="option-btn" onclick="sendMessage('Slow performance')">🟠 Slow/Laggy</button>
+                        <button class="option-btn" onclick="sendMessage('Display or UI issue')">🔵 Visual bug</button>
+                    </div>`
+            },
+            crash: {
+                text: "I understand — crashes are frustrating. Let me gather info to prioritize this.",
+                followUp: `<p>A few quick questions:</p>
+                    <div class="ticket-card">
+                        <h4>🐛 Bug Report Form</h4>
+                        <p><strong>Type:</strong> Application Crash</p>
+                        <p><strong>Priority:</strong> High (auto-detected)</p>
+                        <p><strong>Next:</strong> When does the crash happen?</p>
+                    </div>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="createBugTicket('On app launch')">On launch</button>
+                        <button class="option-btn" onclick="createBugTicket('When using a specific feature')">Specific feature</button>
+                        <button class="option-btn" onclick="createBugTicket('Randomly')">Random/unpredictable</button>
+                    </div>`
+            },
+            api: {
+                text: "I'd be happy to help with our API! Here's what you need to know:",
+                followUp: `<div class="code-block">
+// Quick Start - Authentication
+const cloudapp = require('cloudapp-sdk');
+const client = cloudapp.init({
+  apiKey: 'YOUR_API_KEY'
+});
+
+// Make your first request
+const data = await client.getData();
+                    </div>
+                    <div class="message-options" style="margin-top: 1rem;">
+                        <button class="option-btn" onclick="sendMessage('Where do I get my API key?')">Get API key</button>
+                        <button class="option-btn" onclick="sendMessage('Show me more examples')">More examples</button>
+                        <button class="option-btn" onclick="window.open('#','_blank')">📄 Full docs</button>
+                    </div>`
+            },
+            apikey: {
+                text: "Your API key is in Settings → Developers → API Keys. Here's how:",
+                followUp: `<ol style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                        <li>Go to <strong>Settings</strong> in the top-right menu</li>
+                        <li>Click <strong>Developers</strong> in the sidebar</li>
+                        <li>Click <strong>Generate New Key</strong></li>
+                        <li>Copy and store it securely (it won't be shown again!)</li>
+                    </ol>
+                    <p style="margin-top: 1rem; color: #f59e0b;">⚠️ Keep your API key secret — never share it publicly.</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('I can\\'t find the Developers menu')">Can't find it</button>
+                        <button class="option-btn" onclick="sendMessage('Thanks, that helped!')">Got it!</button>
+                    </div>`
+            },
+            cancel: {
+                text: "I'm sorry to hear you're thinking of leaving. Before you go, can I ask why?",
+                followUp: `<p>This helps us improve:</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="handleCancel('too_expensive')">Too expensive</button>
+                        <button class="option-btn" onclick="handleCancel('missing_features')">Missing features</button>
+                        <button class="option-btn" onclick="handleCancel('switching')">Switching tools</button>
+                        <button class="option-btn" onclick="handleCancel('not_using')">Not using it enough</button>
+                    </div>`
+            },
+            human: {
+                text: "I'll connect you with a human agent right away.",
+                followUp: `<div class="ticket-card">
+                        <h4>🎫 Support Ticket Created</h4>
+                        <p><strong>Ticket ID:</strong> <span class="ticket-id">#SUP-${Math.floor(Math.random() * 90000) + 10000}</span></p>
+                        <p><strong>Priority:</strong> Normal</p>
+                        <p><strong>Estimated response:</strong> Under 2 hours</p>
+                    </div>
+                    <p style="margin-top: 1rem;">A support agent will reply via email shortly. Is there anything else I can help with in the meantime?</p>`
+            },
+            thanks: {
+                text: "You're welcome! 😊 Is there anything else I can help you with today?",
+                followUp: `<div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('Yes, I have another question')">Another question</button>
+                        <button class="option-btn" onclick="endChat()">No, I'm all set!</button>
+                    </div>`
+            },
+            plan: {
+                text: "Here's your current subscription details:",
+                followUp: `<div class="ticket-card">
+                        <h4>📋 CloudApp Starter Plan</h4>
+                        <p><strong>Price:</strong> $29/month</p>
+                        <p><strong>Billing cycle:</strong> Monthly (renews Mar 15)</p>
+                        <p><strong>Users:</strong> 3 of 5 seats used</p>
+                        <p><strong>Storage:</strong> 6.2GB of 10GB used</p>
+                    </div>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('How do I upgrade?')">⬆️ Upgrade</button>
+                        <button class="option-btn" onclick="sendMessage('Download invoice')">🧾 Invoice</button>
+                    </div>`
+            },
+            invoice: {
+                text: "I'll generate your invoice right away:",
+                followUp: `<div class="ticket-card">
+                        <h4>🧾 Invoice Ready</h4>
+                        <p><strong>Period:</strong> Feb 1 - Feb 28, 2026</p>
+                        <p><strong>Amount:</strong> $29.00</p>
+                        <p><strong>Status:</strong> ✅ Paid</p>
+                    </div>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="alert('Invoice downloaded!')">📥 Download PDF</button>
+                        <button class="option-btn" onclick="sendMessage('I need a different invoice')">Different period</button>
+                    </div>`
+            },
+            default: {
+                text: "I want to make sure I help you correctly. Could you tell me more about what you need?",
+                followUp: `<div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('Account & Login issues')">🔑 Account</button>
+                        <button class="option-btn" onclick="sendMessage('Billing question')">💳 Billing</button>
+                        <button class="option-btn" onclick="sendMessage('Report a bug')">🐛 Bug</button>
+                        <button class="option-btn" onclick="sendMessage('Talk to a human')">👤 Human agent</button>
+                    </div>`
+            }
+        };
+
+        function getResponse(message) {
+            const lower = message.toLowerCase();
+            
+            if (lower.includes('password') || lower.includes('login') || lower.includes('forgot') || lower.includes('reset') || lower.includes('account & login')) {
+                return responses.password;
+            }
+            if (lower.includes('billing') || lower.includes('payment') || lower.includes('invoice') || lower.includes('subscription')) {
+                if (lower.includes('invoice') || lower.includes('download')) return responses.invoice;
+                return responses.billing;
+            }
+            if (lower.includes('upgrade') || lower.includes('plan') && lower.includes('change')) {
+                return responses.upgrade;
+            }
+            if (lower.includes('current plan') || lower.includes('my plan') || lower.includes('show') && lower.includes('plan')) {
+                return responses.plan;
+            }
+            if (lower.includes('bug') || lower.includes('report') || lower.includes('issue') || lower.includes('problem') || lower.includes('not working')) {
+                return responses.bug;
+            }
+            if (lower.includes('crash') || lower.includes('freeze') || lower.includes('crashing')) {
+                return responses.crash;
+            }
+            if (lower.includes('api')) {
+                if (lower.includes('key')) return responses.apikey;
+                return responses.api;
+            }
+            if (lower.includes('cancel') || lower.includes('leave') || lower.includes('close account')) {
+                return responses.cancel;
+            }
+            if (lower.includes('human') || lower.includes('agent') || lower.includes('person') || lower.includes('real')) {
+                return responses.human;
+            }
+            if (lower.includes('thank') || lower.includes('helped') || lower.includes('got it')) {
+                return responses.thanks;
+            }
+            
+            return responses.default;
+        }
+
+        function handlePasswordReset() {
+            addMessage("✉️ Send reset link", true);
+            setTimeout(() => {
+                addMessage(`<p>Done! I've sent a password reset link to <strong>j***@email.com</strong></p>
+                    <p style="margin-top: 0.5rem; color: #94a3b8;">Check your inbox (and spam folder). The link expires in 1 hour.</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('I didn\\'t receive it')">Didn't get it</button>
+                        <button class="option-btn" onclick="sendMessage('Thanks, got it!')">Got it!</button>
+                    </div>`, false);
+            }, 1000);
+        }
+
+        function handleUpgrade(plan) {
+            const plans = {
+                pro: { name: 'Pro', price: '$79/mo', features: '25 users • 100GB • Priority support' },
+                business: { name: 'Business', price: '$199/mo', features: 'Unlimited users • 1TB • 24/7 phone support' }
+            };
+            const p = plans[plan];
+            addMessage(`Upgrade to ${p.name}`, true);
+            setTimeout(() => {
+                addMessage(`<p>Great choice! The ${p.name} plan includes:</p>
+                    <div class="ticket-card">
+                        <h4>🚀 ${p.name} Plan - ${p.price}</h4>
+                        <p>${p.features}</p>
+                    </div>
+                    <p style="margin-top: 1rem;">Your new plan will start immediately. The prorated amount will be charged to your card on file.</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="confirmUpgrade('${plan}')">✅ Confirm upgrade</button>
+                        <button class="option-btn" onclick="sendMessage('I have questions first')">Questions</button>
+                    </div>`, false);
+            }, 1000);
+        }
+
+        function confirmUpgrade(plan) {
+            addMessage("✅ Confirm upgrade", true);
+            setTimeout(() => {
+                addMessage(`<p>🎉 <strong>Upgrade complete!</strong></p>
+                    <p style="margin-top: 0.5rem;">You now have access to all ${plan === 'pro' ? 'Pro' : 'Business'} features. A confirmation email is on its way.</p>
+                    <p style="margin-top: 0.5rem; color: #4ade80;">✓ New features activated immediately</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('Thanks!')">Thanks!</button>
+                    </div>`, false);
+            }, 1500);
+        }
+
+        function createBugTicket(when) {
+            addMessage(when, true);
+            setTimeout(() => {
+                const ticketId = Math.floor(Math.random() * 90000) + 10000;
+                addMessage(`<p>Thank you for the details. I've created a bug report:</p>
+                    <div class="ticket-card">
+                        <h4>🐛 Bug Report Created</h4>
+                        <p><strong>ID:</strong> <span class="ticket-id">#BUG-${ticketId}</span></p>
+                        <p><strong>Type:</strong> Application Crash</p>
+                        <p><strong>When:</strong> ${when}</p>
+                        <p><strong>Priority:</strong> High</p>
+                        <p><strong>Status:</strong> Assigned to Engineering</p>
+                    </div>
+                    <p style="margin-top: 1rem;">Our team will investigate and update you via email within 24 hours. Anything else I can help with?</p>`, false);
+            }, 1200);
+        }
+
+        function handleCancel(reason) {
+            const reasons = {
+                too_expensive: "I understand budget constraints. Would a 20% discount for 3 months help?",
+                missing_features: "What features are you missing? I'd like to pass this to our product team.",
+                switching: "May I ask which tool you're switching to? We'd love to understand.",
+                not_using: "Would a pause option work better? You can freeze your account for up to 3 months."
+            };
+            
+            addMessage(reason.replace('_', ' '), true);
+            setTimeout(() => {
+                addMessage(`<p>${reasons[reason]}</p>
+                    <div class="message-options">
+                        <button class="option-btn" onclick="sendMessage('Tell me more')">Tell me more</button>
+                        <button class="option-btn" onclick="sendMessage('No, I want to cancel')">Proceed with cancel</button>
+                    </div>`, false);
+            }, 1000);
+        }
+
+        function endChat() {
+            addMessage("No, I'm all set!", true);
+            setTimeout(() => {
+                addMessage(`<p>Perfect! Thanks for chatting with CloudApp Support. Have a great day! 👋</p>
+                    <p style="margin-top: 0.5rem; color: #94a3b8;">This conversation will be saved to your account for reference.</p>`, false);
+            }, 800);
+        }
+
+        function sendMessage(text) {
+            const input = document.getElementById('userInput');
+            const message = text || input.value.trim();
+            if (!message) return;
+            
+            addMessage(message, true);
+            input.value = '';
+            
+            showTyping();
+            
+            setTimeout(() => {
+                hideTyping();
+                const response = getResponse(message);
+                addMessage(response.text + (response.followUp ? response.followUp : ''), false);
+            }, 800 + Math.random() * 700);
+        }
+
+        function addMessage(content, isUser) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            div.innerHTML = isUser ? `<p>${content}</p>` : content;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping() {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'message bot-message';
+            div.id = 'typing';
+            div.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') sendMessage();
+        }
+    </script>
+</body>
+</html>
